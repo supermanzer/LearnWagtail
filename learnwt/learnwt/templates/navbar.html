@@ -1,0 +1,53 @@
+<!--
+learnwt/templates/nav.html
+===========================================================
+A template to house our navbar, which will be universal but extensible.
+-->
+{% extends 'base.html' %}
+{% load wagtailimages_tags %}
+
+{% block navbar %}
+    {% image self.sidenav_image fill-400x400 as img %}
+<div class="navbar-fixed">
+    <nav class="gd-neva">
+        <div class="nav-wrapper">
+            <div class="container w-100">
+                <div class="row">
+                    <div class="col s9">
+                         <ul id="nav-mobile" class="left hide-on-med-and-down">
+                            {% include "nav_links.html" %}
+                          </ul>
+                         <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                         <a href="/" class="center brand-logo">Gentlemen Scientists</a>
+                    </div>
+                    <div class="col s3 right">
+                        <form action="">
+                            <div class="input-field">
+                                <input type="search" id="search">
+                                <label for="search" class="label-icon">
+                                    <i class="material-icons">search</i>
+                                </label>
+                                <i class="material-icons">close</i>
+                            </div>
+                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </nav>
+</div>
+<ul id="slide-out" class="sidenav">
+    <li>
+        <div class="user-view">
+            <div class="background">
+                <img src="{{ img.url }}" alt="">
+            </div>
+            <a href="#name"><span class="white-text name">{{ user.get_full_name }}</span></a>
+            <a href="#email"><span class="white-text email">{{ user.email }}</span></a>
+        </div>
+    </li>
+    {% include "nav_links.html" %}
+</ul>
+
+
+{% endblock %}

@@ -28,6 +28,13 @@ class HomePage(Page):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    sidenav_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=False,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
     banner_cta = models.ForeignKey(
         "wagtailcore.Page",
         null=True,
@@ -40,6 +47,7 @@ class HomePage(Page):
         FieldPanel('banner_title'),
         FieldPanel('banner_subtitle'),
         ImageChooserPanel('banner_image'),
+        ImageChooserPanel('sidenav_image'),
         PageChooserPanel('banner_cta'),
     ]
 

@@ -1,0 +1,21 @@
+{% extends "navbar.html" %}
+{% load wagtailcore_tags %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col s12 center">
+                <h3 class="indigo-text text-darken-3">{{ self.subtitle }} </h3>
+            </div>
+        </div>
+        <div class="row">
+            {% for block in page.content %}
+                <div class="col s8 m6 l4">
+                    {% include_block block %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+

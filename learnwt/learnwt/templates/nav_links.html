@@ -1,0 +1,12 @@
+<!--
+learnwt/templates/nav_links.html
+===========================================================
+The idea here is to centralize the generic links that will be present in both
+our navbar header and sidenav elements.
+-->
+
+<!-- Iterating over child pages -->
+<li><a href="{{ self.url }}"><i class="material-icons">home</i> Home</a></li>
+{% for child in self.get_children %}
+<li><a href="{{ child.url }}">{{ child.title }}</a></li>
+{% endfor %}
