@@ -1,0 +1,14 @@
+div.image-holder {
+    min-height: 50em;
+}
+div.caption {
+    height: 50em;
+}
+
+.fullh {
+    height: 100%;
+}
+
+.darkb {
+    background-color: rgba(0,0,0,0.45);
+}
