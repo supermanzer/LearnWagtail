@@ -1,0 +1,17 @@
+{% load wagtailcore_tags %}
+<div class="row">
+    <div class="col l6">
+        <h1>{{ self.title }}</h1>
+        <p>{{ self.text|richtext }}</p>
+        <a href="
+            {% if self.button_page %}
+                {{ self.button_page.url }}
+        {% elif self.button_url %}
+                {{ self.button_url }}
+        {% endif %}
+           " class="btn blue">
+            <i class="material-icons">view_module</i>{{ self.button_text }}
+        </a>
+
+    </div>
+</div>

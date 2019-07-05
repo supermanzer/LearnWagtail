@@ -4,10 +4,9 @@ learnwt/templates/nav.html
 A template to house our navbar, which will be universal but extensible.
 -->
 {% extends 'base.html' %}
-{% load wagtailimages_tags %}
+
 
 {% block navbar %}
-    {% image self.sidenav_image fill-400x400 as img %}
 <div class="navbar-fixed">
     <nav class="gd-neva">
         <div class="nav-wrapper">
@@ -18,7 +17,7 @@ A template to house our navbar, which will be universal but extensible.
                             {% include "nav_links.html" %}
                           </ul>
                          <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-                         <a href="/" class="center brand-logo">Gentlemen Scientists</a>
+                         <a href="/" class="center brand-logo">{{ self.subtitle|default:"Gentlemen Scientists" }}</a>
                     </div>
                     <div class="col s3 right">
                         <form action="">
@@ -36,18 +35,7 @@ A template to house our navbar, which will be universal but extensible.
         </div>
       </nav>
 </div>
-<ul id="slide-out" class="sidenav">
-    <li>
-        <div class="user-view">
-            <div class="background">
-                <img src="{{ img.url }}" alt="">
-            </div>
-            <a href="#name"><span class="white-text name">{{ user.get_full_name }}</span></a>
-            <a href="#email"><span class="white-text email">{{ user.email }}</span></a>
-        </div>
-    </li>
-    {% include "nav_links.html" %}
-</ul>
+{% include "sidenav.html" %}
 
 
 {% endblock %}

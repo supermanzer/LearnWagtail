@@ -13,16 +13,23 @@ This file defines the template used to render the initial homepage.
         url('{{ img.url }}'); background-size: cover;">
         {% image self.banner_image fill-900x400 as img %}
         <div class="caption center-align darkb row" >
-            <div class="fullh valign-wrapper col s12">
-                <h1 class="white-text">{{ self.banner_title }}</h1>
-                <div class="divider white"></div>
-                <h5 class="light grey-text text-lighten-3">
-                    {{ self.banner_subtitle|richtext }}</h5>
-                {% if self.banner_cta %}
-                     <a href="#" class="btn btn-lg" role="button">@todo</a>
-                {% endif %}
+            <div class="fullh valign-wrapper">
+                 <div class="col s12">
+                    <h1 class="white-text">{{ self.banner_title }}</h1>
+                    <div class="divider white"></div>
+                    <h5 class="light grey-text text-lighten-3">
+                        {{ self.banner_subtitle|richtext }}</h5>
+                    {% if self.banner_cta %}
+                         <a href="#" class="btn btn-lg" role="button">@todo</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
+    {% for block in page.content %}
+        <div class="col s12">
+            {% include_block block %}
+        </div>
+    {% endfor %}
 {% endblock %}
 

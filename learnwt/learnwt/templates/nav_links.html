@@ -6,7 +6,11 @@ our navbar header and sidenav elements.
 -->
 
 <!-- Iterating over child pages -->
-<li><a href="{{ self.url }}"><i class="material-icons">home</i> Home</a></li>
+{% if self.get_parent %}
+    <li><a href="{{ self.get_parent.url }}">{{ self.get_parent.title }}</a></li>
+{% endif %}
+
+<li><a href="{{ self.url }}"> {{ self.title }}</a></li>
 {% for child in self.get_children %}
 <li><a href="{{ child.url }}">{{ child.title }}</a></li>
 {% endfor %}

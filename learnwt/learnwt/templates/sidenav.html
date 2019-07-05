@@ -1,0 +1,18 @@
+{% load wagtailimages_tags %}
+
+{% image self.sidenav_image fill-400x400 as img %}
+{% if not img %}
+    {% image self.get_parent.sidenav_image fill-400x400 as img %}
+{% endif %}
+<ul id="slide-out" class="sidenav">
+    <li>
+        <div class="user-view">
+            <div class="background">
+                <img src="{{ img.url }}" alt="">
+            </div>
+            <a href="#name"><span class="white-text name">{{ user.get_full_name }}</span></a>
+            <a href="#email"><span class="white-text email">{{ user.email }}</span></a>
+        </div>
+    </li>
+    {% include "nav_links.html" %}
+</ul>
