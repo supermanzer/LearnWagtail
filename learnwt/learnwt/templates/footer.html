@@ -1,0 +1,29 @@
+<div class="container w-100">
+    <div class="row">
+        {% if settings.site_settings.SocialSetting.facebook %}
+            <div class="col s4 center">
+                <a id="fb" href="{{ settings.site_settings.SocialSetting.facebook }}">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <label for="#fb">Follow Us on Facebook</label>
+            </div>
+        {% endif %}
+        {% if settings.site_settings.SocialSetting.twitter %}
+            <div class="col s4 center">
+                <a id="tw" href="{{ settings.site_settings.SocialSetting.twitter }}">
+                    <i class="fab fa-twitter-square"></i>
+                </a>
+                <label for="#tw">Follow Us on Twitter</label>
+            </div>
+        {% endif %}
+        {% if settings.site_settings.SocialSetting.youtube %}
+            <div class="col s4 center">
+                <a id="yt" href="{{ settings.site_settings.SocialSetting.youtube }}">
+                    <i class="fab fa-youtube-square"></i>
+                </a>
+                <label for="#yt">Watch exciting science on Youtube</label>
+            </div>
+        {% endif %}
+    </div>
+</div>
+

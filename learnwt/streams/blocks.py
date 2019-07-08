@@ -58,8 +58,6 @@ class SimpleRichtextBlock(blocks.RichTextBlock):
             'italic',
             'link'
         ]
-        # super().__init__(**kwargs)
-
 
     class Meta:
         template = 'streams/richtext_block.html'
