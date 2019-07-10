@@ -12,5 +12,5 @@ our navbar header and sidenav elements.
 
 <li><a href="{{ self.url }}"> {{ self.title }}</a></li>
 {% for child in self.get_children %}
-<li><a href="{{ child.url }}">{{ child.title }}</a></li>
+    <li><a href="{{ child.url }}">{{ child.title }}</a></li>
 {% endfor %}

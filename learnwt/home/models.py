@@ -5,11 +5,14 @@ Home Application models.
 This file defines models for the home application.
 """
 from django.db import models
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.core.models import Page, Orderable
-from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, StreamFieldPanel, InlinePanel, MultiFieldPanel
+from wagtail.admin.edit_handlers import (
+    FieldPanel, PageChooserPanel, StreamFieldPanel, InlinePanel, MultiFieldPanel
+)
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
+from subscribers.models import Subscriber
 from streams import blocks
 
 
@@ -41,6 +44,12 @@ class HomePageCarousel(Orderable):
         FieldPanel('text_orient'),
         ImageChooserPanel("carousel_image"),
     ]
+
+class HomePageSubscribers(Orderable, Subscriber):
+    page = ParentalKey(
+        'home.HomePage', on_delete=models.CASCADE,
+        related_name='homepage_subscribers'
+    )
 
 class HomePage(Page):
     """
@@ -87,6 +96,7 @@ class HomePage(Page):
         MultiFieldPanel([
             InlinePanel('carousel_images', min_num=1, max_num=5, label='Images'),
         ], heading='Carousel Images'),
+        InlinePanel('homepage_subscribers', label="Subscribers"),
         StreamFieldPanel('content'),
     ]
 
