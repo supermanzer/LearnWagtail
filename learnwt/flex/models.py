@@ -25,6 +25,7 @@ class FlexPage(Page):
         ('simple_richtext', blocks.SimpleRichtextBlock()),
         ("cards", blocks.CardBlock()),
         ("cta", blocks.CTABlock()),
+        ("button_block", blocks.ButtonBlock()),
     ], null=True, blank=True)
 
     subtitle = models.CharField(max_length=100, null=True, blank=True, help_text='Appears in the Navbar')

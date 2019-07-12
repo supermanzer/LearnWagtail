@@ -1,0 +1,21 @@
+{% load wagtailcore_tags %}
+<div class="row">
+    <div class="col l6">
+        <a href="
+            {% comment %}
+            In some circles, it is considered advisable to avoid putting
+            too much logic in your templates.  In this case we are putting our
+            logic in our streams/blocks.py file. - StructValue
+            {% if self.button_page %}
+                {{ self.button_page.url }}
+            {% elif self.button_url %}
+                    {{ self.button_url }}
+            {% endif %}
+        {% endcomment %}
+            {{ self.url }}
+           " class="btn blue">
+            <i class="material-icons">view_module</i>{{ self.button_text }}
+        </a>
+
+    </div>
+</div>

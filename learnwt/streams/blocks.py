@@ -78,3 +78,27 @@ class CTABlock(blocks.StructBlock):
         template = 'streams/cta_block.html'
         icon = "doc-full"
         label = 'Call To Action'
+
+
+class LinkStructValue(blocks.StructValue):
+    """Additional logic for URLs."""
+    
+    # TODO (ryan@gensci.org): Add validation criteria that requires at least one of these fields be filled out.
+    def url(self):
+        page = self.get('button_page')
+        external_url = self.get('button_url')
+        url = page.url if page else external_url
+        return url
+
+
+class ButtonBlock(blocks.StructBlock):
+    """Define button for internal or external link."""
+    button_page = blocks.PageChooserBlock(required=False, help_text='If selected, this will be used first')  # Internal link
+    button_url = blocks.URLBlock(required=False, help_text='Used if button page is not supplied.')  # External link
+    button_text = blocks.CharBlock(required=True, default='Learn More', max_length=20)
+
+    class Meta:
+        template = 'streams/button_block.html'
+        icon = "doc-full"
+        label = 'Single Button'
+        value_class = LinkStructValue
