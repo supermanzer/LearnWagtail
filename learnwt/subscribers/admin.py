@@ -9,7 +9,7 @@ class SubscribersAdmin(ModelAdmin):
 
     model = Subscriber
     menu_label = "Subscribers"
-    menu_icon = 'placeholder'
+    menu_icon = 'group'
     menu_order = 500
     add_to_settings_menu = False
     exclude_from_explorer = False

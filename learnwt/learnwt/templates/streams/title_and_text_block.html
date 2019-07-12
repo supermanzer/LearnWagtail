@@ -1,6 +1,7 @@
+{% load wagtailcore_tags %}
 <div class="center">
     <h3 class="indigo-text text-darken-4">{{ self.title }}</h3>
     <div class="divider teal darken-4"></div>
-    <p>{{ self.text }}</p>
+    <p>{{ self.text|richtext }}</p>
 </div>
 

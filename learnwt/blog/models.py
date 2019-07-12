@@ -6,12 +6,14 @@ This models.py file defines the data models for our Blog app.
 """
 
 from django.db import models
+from django.shortcuts import render
 
 from wagtail.core.models import Page
 from wagtail.core.fields import StreamField, RichTextField
 from wagtail.admin.edit_handlers import (
     FieldPanel, StreamFieldPanel, RichTextFieldPanel
 )
+from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.images.edit_handlers import ImageChooserPanel
 
 from streams import blocks
@@ -19,7 +21,7 @@ from streams import blocks
 # Create your models here.
 
 
-class BlogListingPage(Page):
+class BlogListingPage(RoutablePageMixin, Page):
     """Return list of all blog detail pages."""
 
     template = 'blog/blog_listing_page.html'
@@ -32,12 +34,35 @@ class BlogListingPage(Page):
     def get_context(self, request, *args, **kwargs):
         """Adding blog pages."""
         context = super().get_context(request, *args, **kwargs)
-        context['posts'] = BlogDetailPage.objects.live().public()
+        context['posts'] = BlogDetailPage.objects.live().public().order_by('last_published_at')
         return context
 
     content_panels = Page.content_panels + [
         FieldPanel('custom_title'),
     ]
+
+    class Meta:
+        verbose_name = "Blog Listing"
+        verbose_name_plural = "Blog Listings"
+
+    @route(r'^latest/$')
+    def latest_blog_posts(self, request, *args, **kwargs):
+        context = self.get_context(request, *args, **kwargs)
+        context['latest_posts'] = context['posts'][:2]
+        context['n'] = context['latest_posts'].count()
+        return render(request, 'blog/latest_posts.html', context)
+
+    def get_sitemap_urls(self, request=None):
+        # return [] <- Do this to avoid sitemaps for this page
+        sitemap = super().get_sitemap_urls(request)
+        sitemap.append(
+            {
+                "location": self.full_url + self.reverse_subpage("latest_blog_posts"),
+                "lastmod": (self.last_published_at or self.latest_revision_created_at),
+                "priority": 0.9
+            }
+        )
+        return sitemap
 
 
 class BlogDetailPage(Page):

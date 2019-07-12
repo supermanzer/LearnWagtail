@@ -5,6 +5,7 @@ Home Application models.
 This file defines models for the home application.
 """
 from django.db import models
+from django.shortcuts import render
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.core.models import Page, Orderable
 from wagtail.admin.edit_handlers import (
@@ -12,6 +13,7 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from subscribers.models import Subscriber
 from streams import blocks
 
@@ -51,7 +53,8 @@ class HomePageSubscribers(Orderable, Subscriber):
         related_name='homepage_subscribers'
     )
 
-class HomePage(Page):
+
+class HomePage(RoutablePageMixin, Page):
     """
     Define home page data model.
     """
@@ -103,3 +106,9 @@ class HomePage(Page):
     class Meta:
         verbose_name = "Hello World"
         verbose_name_plural = "Hello Worlds"
+
+    @route(r'^subscribe/$')
+    def subscribe_page(self, request, *args, **kwargs):
+        context = self.get_context(request, *args, **kwargs)
+        context['special_test'] = 'This Is Silly'
+        return render(request, 'home/subscribe.html', context)
