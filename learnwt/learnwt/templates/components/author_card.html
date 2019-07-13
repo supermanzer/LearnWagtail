@@ -1,0 +1,18 @@
+{% load wagtailimages_tags wagtailcore_tags static %}
+
+ <div class="card">
+    {% image iter.author.image fill-50x50 as img %}
+
+
+    <div class="card-content">
+        <img class="circle responsive-img" src="{{ img.url }}" alt="{{ iter.author.name }}">
+        <span class="card-title">{{ iter.author.name }}</span>
+    </div>
+    <div class="card-action">
+        {% if iter.author.website %}
+            <a href="{{ iter.author.website }}" class="btn indigo white-text">
+            View Site
+            </a>
+        {% endif %}
+    </div>
+</div>
