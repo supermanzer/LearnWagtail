@@ -7,7 +7,10 @@ This models.py file defines the data models for our Blog app.
 
 from django.db import models
 from django.shortcuts import render
-from modelcluster.fields import ParentalKey
+from django.utils.text import slugify
+from django import forms
+
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 
 from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import StreamField, RichTextField
@@ -37,86 +40,6 @@ class BlogAuthorsOrderable(Orderable):
         SnippetChooserPanel('author')
     ]
 
-
-class BlogListingPage(RoutablePageMixin, Page):
-    """Return list of all blog detail pages."""
-
-    template = 'blog/blog_listing_page.html'
-
-    custom_title = models.CharField(
-        max_length=100, blank=False, null=False,
-        help_text='Overwrite default title'
-    )
-
-    def get_context(self, request, *args, **kwargs):
-        """Adding blog pages."""
-        context = super().get_context(request, *args, **kwargs)
-        context['posts'] = BlogDetailPage.objects.live().public().order_by('last_published_at')
-        return context
-
-    content_panels = Page.content_panels + [
-        FieldPanel('custom_title'),
-    ]
-
-    class Meta:
-        verbose_name = "Blog Listing"
-        verbose_name_plural = "Blog Listings"
-
-    @route(r'^latest/$')
-    def latest_blog_posts(self, request, *args, **kwargs):
-        context = self.get_context(request, *args, **kwargs)
-        context['latest_posts'] = context['posts'][:2]
-        context['n'] = context['latest_posts'].count()
-        return render(request, 'blog/latest_posts.html', context)
-
-    def get_sitemap_urls(self, request=None):
-        # return [] <- Do this to avoid sitemaps for this page
-        sitemap = super().get_sitemap_urls(request)
-        sitemap.append(
-            {
-                "location": self.full_url + self.reverse_subpage("latest_blog_posts"),
-                "lastmod": (self.last_published_at or self.latest_revision_created_at),
-                "priority": 0.9
-            }
-        )
-        return sitemap
-
-
-class BlogDetailPage(Page):
-    """Create a blog page model."""
-
-    custom_title = models.CharField(
-        max_length=100, null=False, blank=False
-    )
-    blog_image = models.ForeignKey(
-        "wagtailimages.Image",
-        blank=False,
-        null=True,
-        related_name='+',
-        on_delete=models.SET_NULL
-    )
-    blog_summary = RichTextField(
-        blank=False, null=True,
-        help_text='Provide a short summary of what this blog post is about.'
-    )
-    content = StreamField([
-        ("title_and_text", blocks.TitleAndTextBlock()),
-        ('full_richtext', blocks.RichtextBlock()),
-        ('simple_richtext', blocks.SimpleRichtextBlock()),
-        ("cards", blocks.CardBlock()),
-        ("cta", blocks.CTABlock()),
-    ], null=True, blank=True)
-
-    content_panels = Page.content_panels + [
-        FieldPanel('custom_title'),
-        RichTextFieldPanel('blog_summary'),
-        ImageChooserPanel('blog_image'),
-        StreamFieldPanel('content'),
-        MultiFieldPanel([
-            InlinePanel('blog_authors', label="Author",
-                        min_num=1, max_num=8)
-        ], heading="Blog Authors")
-    ]
 
 @register_snippet
 class BlogAuthor(models.Model):
@@ -163,6 +86,155 @@ class BlogAuthor(models.Model):
         """String representative of this class."""
         return self.name()
 
-    # class Meta:
-    #     verbose_name = 'Blog Author',
-    #     verbose_name_plural = "Blog Authors"
+    class Meta:
+        verbose_name = "Blog Author"
+
+
+@register_snippet
+class BlogCategory(models.Model):
+    """Define categories for our blog posts."""
+
+    name = models.CharField(max_length=100, unique=True, null=False, blank=False)
+    slug = models.SlugField(
+        verbose_name="slug", allow_unicode=True, max_length=100,
+        default=""
+    )
+
+    panels = [
+        FieldPanel('name'),
+    ]
+
+    def save(self, *args, **kwargs):
+        name = self.name
+        self.slug = slugify(name, allow_unicode=True)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Blog Category'
+        verbose_name_plural = "Blog Categories"
+        ordering = ['name', ]
+
+
+class BlogListingPage(RoutablePageMixin, Page):
+    """Return list of all blog detail pages."""
+
+    template = 'blog/blog_listing_page.html'
+
+    custom_title = models.CharField(
+        max_length=100, blank=False, null=False,
+        help_text='Overwrite default title'
+    )
+
+    def get_context(self, request, *args, **kwargs):
+        """Adding blog pages."""
+        context = super().get_context(request, *args, **kwargs)
+        context['posts'] = BlogDetailPage.objects.live().public().order_by('last_published_at')
+        context['categories'] = BlogCategory.objects.all()
+        return context
+
+    content_panels = Page.content_panels + [
+        FieldPanel('custom_title'),
+    ]
+
+    class Meta:
+        verbose_name = "Blog Listing"
+        verbose_name_plural = "Blog Listings"
+
+    @route(r'^latest/$')
+    def latest_blog_posts(self, request, *args, **kwargs):
+        context = self.get_context(request, *args, **kwargs)
+        context['latest_posts'] = context['posts'][:2]
+        context['n'] = context['latest_posts'].count()
+        return render(request, 'blog/latest_posts.html', context)
+
+    def get_sitemap_urls(self, request=None):
+        # return [] <- Do this to avoid sitemaps for this page
+        sitemap = super().get_sitemap_urls(request)
+        sitemap.append(
+            {
+                "location": self.full_url + self.reverse_subpage("latest_blog_posts"),
+                "lastmod": (self.last_published_at or self.latest_revision_created_at),
+                "priority": 0.9
+            }
+        )
+        return sitemap
+
+
+class BlogDetailPage(Page):
+    """Define parental blog detail class."""
+
+    custom_title = models.CharField(
+        max_length=100, null=False, blank=False
+    )
+    blog_image = models.ForeignKey(
+        "wagtailimages.Image",
+        blank=False,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+    blog_summary = RichTextField(
+        blank=False, null=True,
+        help_text='Provide a short summary of what this blog post is about.'
+    )
+
+    categories = ParentalManyToManyField('blog.BlogCategory', blank=True)
+
+    content = StreamField([
+        ("title_and_text", blocks.TitleAndTextBlock()),
+        ('full_richtext', blocks.RichtextBlock()),
+        ('simple_richtext', blocks.SimpleRichtextBlock()),
+        ("cards", blocks.CardBlock()),
+        ("cta", blocks.CTABlock()),
+    ], null=True, blank=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel('custom_title'),
+        RichTextFieldPanel('blog_summary'),
+        ImageChooserPanel('blog_image'),
+        StreamFieldPanel('content'),
+        MultiFieldPanel([
+            InlinePanel('blog_authors', label="Author",
+                        min_num=1, max_num=8)
+        ], heading="Blog Authors"),
+        MultiFieldPanel([
+            FieldPanel('categories', widget=forms.CheckboxSelectMultiple)
+        ], heading='Categories')
+    ]
+
+# First sub-classed blog detail page
+class ArticleBlogPage(BlogDetailPage):
+    """Define custom model for articles."""
+
+    template = 'blog/article_blog_page.html'
+    subtitle = models.CharField(max_length=150, blank=True, null=True)
+    intro_image = models.ForeignKey(
+        'wagtailimages.Image',
+        related_name='+',
+        blank=True, null=True,
+        on_delete=models.SET_NULL,
+        help_text='Best size for this image will be 1200x300'
+    )
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel([
+            FieldPanel('custom_title'),
+            FieldPanel('subtitle'),
+            RichTextFieldPanel('blog_summary'),
+        ], heading='Intro text'),
+        MultiFieldPanel([
+            ImageChooserPanel('intro_image'),
+            ImageChooserPanel('blog_image'),
+        ], heading='Article Images'),
+        StreamFieldPanel('content'),
+        MultiFieldPanel([
+            InlinePanel('blog_authors', label="Author",
+                        min_num=1, max_num=8)
+        ], heading="Blog Authors"),
+        MultiFieldPanel([
+            FieldPanel('categories', widget=forms.CheckboxSelectMultiple)
+        ], heading='Categories')
+    ]

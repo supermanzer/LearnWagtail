@@ -13,6 +13,13 @@
 
         </div>
     </div>
+    <div class="row">
+        {% for category in self.categories.all %}
+            <a href="" class="btn btn-small light-blue lighten-2">
+                <i class="material-icons">label</i>
+                {{ category.name }}</a>
+        {% endfor %}
+    </div>
     <div class="container">
         <div class="row">
             <div class="col s3">
