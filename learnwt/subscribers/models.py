@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 # Create your models here.
 class Subscriber(models.Model):
@@ -23,5 +24,5 @@ class Subscriber(models.Model):
         return f"{self.first_name} {self.last_name}"
 
     class Meta:
-        verbose_name = 'Subscriber'
-        verbose_name_plural = "Subscribers"
+        verbose_name = _('Subscriber')
+        verbose_name_plural = _("Subscribers")

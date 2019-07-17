@@ -205,6 +205,7 @@ class BlogDetailPage(Page):
         ], heading='Categories')
     ]
 
+
 # First sub-classed blog detail page
 class ArticleBlogPage(BlogDetailPage):
     """Define custom model for articles."""
@@ -229,6 +230,27 @@ class ArticleBlogPage(BlogDetailPage):
             ImageChooserPanel('intro_image'),
             ImageChooserPanel('blog_image'),
         ], heading='Article Images'),
+        StreamFieldPanel('content'),
+        MultiFieldPanel([
+            InlinePanel('blog_authors', label="Author",
+                        min_num=1, max_num=8)
+        ], heading="Blog Authors"),
+        MultiFieldPanel([
+            FieldPanel('categories', widget=forms.CheckboxSelectMultiple)
+        ], heading='Categories')
+    ]
+
+
+class VideoBlogPage(BlogDetailPage):
+    """Define a sub-class of BlogDetailPage explicityly for video."""
+
+    youtube_video_id = models.CharField(max_length=100)
+
+    content_panels = Page.content_panels + [
+        FieldPanel('custom_title'),
+        RichTextFieldPanel('blog_summary'),
+        ImageChooserPanel('blog_image'),
+        FieldPanel('youtube_video_id'),
         StreamFieldPanel('content'),
         MultiFieldPanel([
             InlinePanel('blog_authors', label="Author",

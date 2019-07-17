@@ -27,3 +27,7 @@ div.w-100  {
     margin-bottom: 1em;
     margin-top: 1em;
 }
+
+.fw {
+    width: 100%;
+}

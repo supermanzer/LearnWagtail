@@ -1,0 +1,62 @@
+{% extends "navbar.html" %}
+
+{% load wagtailimages_tags wagtailcore_tags static %}
+
+
+{% block content %}
+    {% image self.blog_image fill-1000x400 as banner  %}
+   <!--  <img src="{{ banner.url }}" alt="{{ banner.alt }}"> -->
+    <div class="row" style="background-image: url({{ banner.url }})">
+        <div class="col s12 center">
+            <h1 class="white-text">
+                {% if self.custom_title %}
+                    {{ self.custom_title }}
+                {% else %}
+                    {{ self.title }}
+                {% endif %}
+            </h1>
+            <div class="divider white"></div>
+            {% if self.subtitle %}
+                <h3 class="white-text">{{ self.subtitle }}</h3>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        {% for category in self.categories.all %}
+            <a href="" class="btn btn-small light-blue lighten-2">
+                <i class="material-icons">label</i>
+                {{ category.name }}</a>
+        {% endfor %}
+    </div>
+    {% if self.intro_image %}
+        <div class="container">
+            <div class="row">
+                <div class="col s12">
+                    {% image self.intro_image fill-700x400 as intro_image %}
+                    <img src="{{ intro_image.url }}" alt="{{ intro_image.alt }}">
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="container w-100">
+        <div class="row">
+            <div class="col s3">
+                <h5 class="indigo-text text-darken-4">Authors: </h5>
+                <!-- We are actually iterating through our Orderable model which is related to our BlogAuthor
+                model through the ForeignKey field author -->
+                {% for iter in self.blog_authors.all %}
+                    {% include "components/author_card.html" %}
+                {% endfor %}
+
+            </div>
+            <div class="col s9">
+                {% for block in page.content %}
+                    <div class="col s12">
+                        {% include_block block %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
