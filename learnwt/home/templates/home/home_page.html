@@ -32,9 +32,9 @@ This file defines the template used to render the initial homepage.
         <ul class="slides">
         {% for cimage in self.carousel_images.all %}
             {% image cimage.carousel_image fill-1200x800 as img %}
-            <li>
-                <img src="{{ img.url }}" alt="{{ img.alt }}"> <!-- random image -->
+            <li class="">
 
+                <img src="{{ img.url }}" alt="{{ img.alt }}"> <!-- random image -->
                 <div class="caption {{ cimage.text_orient }}-align">
                     <h3 class="white-text ">{{ cimage.title }}</h3>
                     <h5 class="light white-text ">{{ cimage.subtitle }}</h5>

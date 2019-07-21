@@ -32,6 +32,12 @@
                             <a href="{{ post.url }}">
                               <img src="{{ img.url }}" alt="{{ img.alt }}">
                               <span class="card-title">{{ post.custom_title }}</span>
+                                {% comment %}
+                                This is where we access specific properties of subclassed page models
+                                {% if post.specific.subtitle %}
+                                    {{ post.specific.subtitle }}
+                                {% endif %}
+                                {% endcomment %}
                             </a>
                         </div>
                         <div class="card-content">
@@ -47,6 +53,8 @@
             </div>
         </div>
     </div>
-
+    {% if posts.paginator.num_pages > 1 %}
+        {% include 'components/pagination_links.html' %}
+    {% endif %}
 
 {% endblock %}

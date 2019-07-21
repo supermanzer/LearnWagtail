@@ -10,7 +10,7 @@ div.caption {
 }
 
 .darkb {
-    background-color: rgba(0,0,0,0.45);
+    background-color: rgba(0,0,0,0.85);
 }
 
 .gd-neva {
@@ -30,4 +30,8 @@ div.w-100  {
 
 .fw {
     width: 100%;
+}
+
+.pagination li.active {
+    background-color: #a1c4fd;
 }

@@ -9,6 +9,9 @@ from django.db import models
 from django.shortcuts import render
 from django.utils.text import slugify
 from django import forms
+from django.core.paginator import (
+    EmptyPage, PageNotAnInteger, Paginator
+)
 
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 
@@ -131,7 +134,21 @@ class BlogListingPage(RoutablePageMixin, Page):
     def get_context(self, request, *args, **kwargs):
         """Adding blog pages."""
         context = super().get_context(request, *args, **kwargs)
-        context['posts'] = BlogDetailPage.objects.live().public().order_by('last_published_at')
+        # This will contain plenty of subclassed results so you will need
+        # to use post.specific() to access properties of these posts.
+        all_posts = BlogDetailPage.objects.live().public().order_by('last_published_at')
+        # Adding custom pagination to handle errors explicitly
+        paginator = Paginator(all_posts, 3)
+        page = request.GET.get("page")
+
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+
+        context['posts'] = posts
         context['categories'] = BlogCategory.objects.all()
         return context
 
@@ -242,8 +259,8 @@ class ArticleBlogPage(BlogDetailPage):
 
 
 class VideoBlogPage(BlogDetailPage):
-    """Define a sub-class of BlogDetailPage explicityly for video."""
-
+    """Define a sub-class of BlogDetailPage explicitly for video."""
+    template = 'blog/video_blog_page.html'
     youtube_video_id = models.CharField(max_length=100)
 
     content_panels = Page.content_panels + [
