@@ -4,7 +4,18 @@ learnwt/templates/nav_links.html
 The idea here is to centralize the generic links that will be present in both
 our navbar header and sidenav elements.
 -->
+{% load menus_tags %}
 
+{% get_menu "main-menu" as menu %}
+
+{% for item in menu.menu_items.all %}
+    <li><a href="{{ item.link }}"
+        {% if item.open_in_new_tab %}
+            target="_blank"
+       {% endif %}
+    >{{ item.title }}</a></li>
+{% endfor %}
+{% comment %}
 <!-- Iterating over child pages -->
 {% if self.get_parent %}
     <li><a href="{{ self.get_parent.url }}">{{ self.get_parent.title }}</a></li>
@@ -14,3 +25,4 @@ our navbar header and sidenav elements.
 {% for child in self.get_children %}
     <li><a href="{{ child.url }}">{{ child.title }}</a></li>
 {% endfor %}
+{% endcomment %}
