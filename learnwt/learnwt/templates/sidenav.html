@@ -1,9 +1,11 @@
 {% load wagtailimages_tags %}
+{% load menus_tags %}
 
-{% image self.sidenav_image fill-400x400 as img %}
-{% if not img %}
-    {% image self.get_parent.sidenav_image fill-400x400 as img %}
-{% endif %}
+
+{% get_menu "main-menu" as menu %}
+
+{% image menu.menu_image fill-400x400 as img %}
+
 <ul id="slide-out" class="sidenav">
     <li>
         <div class="user-view">

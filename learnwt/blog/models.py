@@ -164,7 +164,7 @@ class BlogListingPage(RoutablePageMixin, Page):
     def latest_blog_posts(self, request, *args, **kwargs):
         context = self.get_context(request, *args, **kwargs)
         context['latest_posts'] = context['posts'][:2]
-        context['n'] = context['latest_posts'].count()
+        context['n'] = len(context['latest_posts'])
         return render(request, 'blog/latest_posts.html', context)
 
     def get_sitemap_urls(self, request=None):

@@ -1,0 +1,22 @@
+{% extends "navbar.html" %}
+{% load wagtailcore_tags materializecss materialize %}
+
+{% block content %}
+<div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title">{{ page.title }}</span>
+                        <p>{{ self.intro|richtext }}</p>
+                        <form action="{% pageurl page %}" method="post">
+                            {% csrf_token %}
+                            {{ form|materialize }}
+                            <input type="submit btn teal white-text">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

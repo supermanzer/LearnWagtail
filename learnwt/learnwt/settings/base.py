@@ -32,6 +32,10 @@ INSTALLED_APPS = [
     'subscribers',
     'blog',
     'menus',
+    'contact',
+
+    'materializecssform',
+    'materializeform',
 
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',

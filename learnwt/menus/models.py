@@ -15,6 +15,7 @@ from wagtail.core.models import Orderable
 from wagtail.admin.edit_handlers import (
     FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel
 )
+from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
 
 
@@ -67,13 +68,20 @@ class Menu(ClusterableModel):
     """Define main menu object."""
 
     title = models.CharField(max_length=100, null=True, blank=False)
-    # A custom
+    # A custom field to autopopulate the slug field
     slug = AutoSlugField(populate_from="title", editable=True)
 
+    menu_image = models.ForeignKey(
+        'wagtailimages.Image',
+        blank=True, null=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
     panels = [
         MultiFieldPanel([
             FieldPanel('title'),
-            FieldPanel('slug')
+            FieldPanel('slug'),
+            ImageChooserPanel('menu_image')
         ], heading="Menu"),
         InlinePanel("menu_items", label='Menu Item')
     ]

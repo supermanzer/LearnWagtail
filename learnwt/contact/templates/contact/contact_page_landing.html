@@ -1,0 +1,14 @@
+{% extends "navbar.html" %}
+{% load wagtailcore_tags materializecss materialize %}
+
+{% block content %}
+    <div class="container">
+        <div class="valign-wrapper">
+            <div class="card">
+                <div class="card-content"><span class="card-title">Thanks!</span>
+                    {{ self.thank_you_text|richtext }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
