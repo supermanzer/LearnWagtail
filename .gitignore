@@ -87,6 +87,7 @@ target/
 *.pyc
 __pycache__/
 local_settings.py
-
+cache/*
 .env
 db.sqlite3
+/learnwt/cache/

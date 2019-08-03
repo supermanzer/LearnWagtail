@@ -1,12 +1,23 @@
 {% extends "navbar.html" %}
 {% load wagtailcore_tags materializecss materialize %}
-
+{% block extra_css %}
+    <style type="text/css">
+        html, body, div.container, div.valign-wrapper {
+            height: 100%;
+        }
+    </style>
+{% endblock %}
 {% block content %}
     <div class="container">
         <div class="valign-wrapper">
-            <div class="card">
-                <div class="card-content"><span class="card-title">Thanks!</span>
-                    {{ self.thank_you_text|richtext }}
+            <div class="row center-align">
+                <div class="card">
+                    <div class="card-content"><span class="card-title">Thanks!</span>
+                        {{ self.thank_you_text|richtext }}
+                    </div>
+                    <div class="card-footer center py-1">
+                        <a href="/" class="btn gd-deepblue">HOME</a>
+                    </div>
                 </div>
             </div>
         </div>

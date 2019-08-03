@@ -1,11 +1,11 @@
-{% load wagtailimages_tags %}
+{% load wagtailimages_tags  cache %}
 {% load menus_tags %}
 
 
 {% get_menu "main-menu" as menu %}
 
 {% image menu.menu_image fill-400x400 as img %}
-
+{% cache 604800 side_nav  %}
 <ul id="slide-out" class="sidenav">
     <li>
         <div class="user-view">
@@ -18,3 +18,4 @@
     </li>
     {% include "nav_links.html" %}
 </ul>
+{% endcache %}

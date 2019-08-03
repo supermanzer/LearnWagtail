@@ -1,6 +1,6 @@
 {% extends "navbar.html" %}
 
-{% load static wagtailcore_tags wagtailimages_tags wagtailroutablepage_tags %}
+{% load static wagtailcore_tags wagtailimages_tags wagtailroutablepage_tags cache %}
 
 {% block content %}
     <a class="btn right" href="{% routablepageurl page 'latest_blog_posts' %}">View Latest</a>
@@ -25,34 +25,35 @@
             <div class="col s8 m9 l10">
                 <h4>Blog Posts</h4>
                 {% for post in posts %}
-                 {% image post.blog_image fill-400x200 as img %}
-                    <div class="col s12 m6 l4">
-                      <div class="card">
-                        <div class="card-image">
-                            <a href="{{ post.url }}">
-                              <img src="{{ img.url }}" alt="{{ img.alt }}">
-                              <span class="card-title">{{ post.custom_title }}</span>
-                                {% comment %}
-                                This is where we access specific properties of subclassed page models
-                                {% if post.specific.subtitle %}
-                                    {{ post.specific.subtitle }}
-                                {% endif %}
-                                {% endcomment %}
-                            </a>
+                    {% cache 604800 blog_post_preview post.id %}
+                     {% image post.blog_image fill-400x200 as img %}
+                        <div class="col s12 m6 l4">
+                          <div class="card">
+                            <div class="card-image">
+                                <a href="{{ post.url }}">
+                                  <img src="{{ img.url }}" alt="{{ img.alt }}">
+                                  <span class="card-title">{{ post.custom_title }}</span>
+                                    {% comment %}
+                                    This is where we access specific properties of subclassed page models
+                                    {% if post.specific.subtitle %}
+                                        {{ post.specific.subtitle }}
+                                    {% endif %}
+                                    {% endcomment %}
+                                </a>
+                            </div>
+                            <div class="card-content">
+                              <p>{{ post.blog_summary|richtext }}</p>
+                            </div>
+                            <div class="card-action">
+                              <a href="{{ post.url }}" class="btn">Learn More <i class="material-icons">info_outline</i></a>
+                            </div>
+                          </div>
                         </div>
-                        <div class="card-content">
-                          <p>{{ post.blog_summary|richtext }}</p>
-                        </div>
-                        <div class="card-action">
-                          <a href="{{ post.url }}" class="btn">Learn More <i class="material-icons">info_outline</i></a>
-                        </div>
-                      </div>
-                    </div>
-
-            {% endfor %}
+                     {% endcache %}
+                  {% endfor %}
+                </div>
             </div>
         </div>
-    </div>
     {% if posts.paginator.num_pages > 1 %}
         {% include 'components/pagination_links.html' %}
     {% endif %}

@@ -10,8 +10,10 @@ decorator==4.4.0
 Django==2.2.3
 django-debug-toolbar==2.0
 django-extensions==2.1.9
+django-materialize-form==0.1.1
 django-materializecss-form==1.1.14
 django-modelcluster==4.4
+django-recaptcha==2.0.4
 django-taggit==0.24.0
 django-treebeard==4.3
 djangorestframework==3.9.4
@@ -36,7 +38,8 @@ toml==0.10.0
 traitlets==4.3.2
 Unidecode==1.1.1
 urllib3==1.25.3
-wagtail==2.5.1
+wagtail==2.6
+wagtail-django-recaptcha==1.0
 wcwidth==0.1.7
 webencodings==0.5.1
 Willow==1.1
