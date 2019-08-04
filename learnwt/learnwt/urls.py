@@ -10,6 +10,8 @@ from wagtail.contrib.sitemaps.views import sitemap
 
 from search import views as search_views
 
+from .api import api_router
+
 urlpatterns = [
     url(r'^django-admin/', admin.site.urls),
 
@@ -20,6 +22,8 @@ urlpatterns = [
 
     url(r'^sitemap.xml$', sitemap),
 
+    # Define and endpoint for our REST API
+    url(r'^api/v2/', api_router.urls),
     # For anything not caught by a more specific rule above, hand over to
     # Wagtail's page serving mechanism. This should be the last pattern in
     # the list:

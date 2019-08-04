@@ -9,6 +9,10 @@ div.caption {
     height: 100%;
 }
 
+div.user-view {
+    min-height: 100px;
+}
+
 .darkb {
     background-color: rgba(0,0,0,0.85);
 }

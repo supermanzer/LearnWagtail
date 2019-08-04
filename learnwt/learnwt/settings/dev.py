@@ -22,7 +22,8 @@ MIDDLEWARE = MIDDLEWARE + [
 
 INTERNAL_IPS = (
     '127.0.0.1',
-    '172.17.0.1'
+    '172.17.0.1',
+    'localhost',
 )
 
 CACHES = {
@@ -31,6 +32,31 @@ CACHES = {
         'LOCATION': os.path.join(BASE_DIR, 'cache')
     }
 }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '{levelname} {module} {message}',
+            'style': '{'
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        }
+    },
+}
+
 try:
     from .local import *
 except ImportError:

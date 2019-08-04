@@ -5,7 +5,7 @@ A template to house our navbar, which will be universal but extensible.
 -->
 {% extends 'base.html' %}
 {% load cache %}
-
+{
 {% block navbar %}
 {% cache 604800 navigation  %}
     <div class="navbar-fixed">
@@ -16,9 +16,6 @@ A template to house our navbar, which will be universal but extensible.
                         <div class="col s9">
                              <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                              <a href="/" class="brand-logo">{{ self.banner_title|default:"Learn Wagtail" }}</a>
-                            <ul id="nav-mobile" class="right hide-on-med-and-down">
-                                {% include "nav_links.html" %}
-                            </ul>
                         </div>
                         {% comment %}
                         <div class="col s3 right">
@@ -40,6 +37,4 @@ A template to house our navbar, which will be universal but extensible.
     </div>
 {% endcache %}
 {% include "sidenav.html" %}
-
-
 {% endblock %}

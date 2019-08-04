@@ -5,7 +5,8 @@ Menu Models
 These models define how we will construction our menus.
 """
 from django.db import models
-
+from django.core.cache import cache
+from django.core.cache.utils import make_template_fragment_key
 from django_extensions.db.fields import AutoSlugField
 
 from modelcluster.models import ClusterableModel
@@ -62,6 +63,15 @@ class MenuItem(Orderable):
             return self.link_title
         else:
             return 'Missing Title'
+
+    def save(self, *args, **kwargs):
+        """Clear cache when changing menu items."""
+        # These items appear in two caches.
+        navbar_key = make_template_fragment_key('navigation')
+        sidenav_key = make_template_fragment_key('side_nav')
+        cache.delete(navbar_key)
+        cache.delete(sidenav_key)
+        return super().save(*args, **kwargs)
 
 @register_snippet
 class Menu(ClusterableModel):

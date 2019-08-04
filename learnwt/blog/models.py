@@ -9,6 +9,8 @@ from django.db import models
 from django.shortcuts import render
 from django.utils.text import slugify
 from django import forms
+from django.core.cache import cache
+from django.core.cache.utils import make_template_fragment_key
 from django.core.paginator import (
     EmptyPage, PageNotAnInteger, Paginator
 )
@@ -27,7 +29,10 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from streams import blocks
+from logging import getLogger
 
+
+logger = getLogger(__name__)
 
 # Create your models here.
 class BlogAuthorsOrderable(Orderable):
@@ -136,7 +141,7 @@ class BlogListingPage(RoutablePageMixin, Page):
         context = super().get_context(request, *args, **kwargs)
         # This will contain plenty of subclassed results so you will need
         # to use post.specific() to access properties of these posts.
-        all_posts = BlogDetailPage.objects.live().public().order_by('last_published_at')
+        all_posts = BlogDetailPage.objects.live().public().order_by('id')
         # Adding custom pagination to handle errors explicitly
         paginator = Paginator(all_posts, 3)
         page = request.GET.get("page")
@@ -222,6 +227,19 @@ class BlogDetailPage(Page):
         ], heading='Categories')
     ]
 
+    class Meta:
+        verbose_name = 'Blog Detail'
+        verbose_name_plural = 'Blog Details'
+
+    def save(self, *args, **kwargs):
+        """Clear the cache for this specific BlogDetail object on save."""
+        cache_key = make_template_fragment_key(
+            'blog_post_preview',
+            [self.id, ]
+        )
+        logger.info(f'BlogDetail page saved. Deleting cache {cache_key}')
+        cache.delete(cache_key)
+        return super().save(*args, **kwargs)
 
 # First sub-classed blog detail page
 class ArticleBlogPage(BlogDetailPage):
