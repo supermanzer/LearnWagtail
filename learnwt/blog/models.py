@@ -92,12 +92,12 @@ class BlogAuthor(models.Model):
         }
         return names.get(name_format)
     # API FIELDS
-    api_fields = [
-        APIField('first_name'),
-        APIField('last_name'),
-        APIField('website'),
-        APIField('image')
-    ]
+    # api_fields = [    <-- THIS DOESN"T WORK BECAUSE IT"S A REGULAR DJANGO MODEL!!!!
+    #     APIField('first_name'),
+    #     APIField('last_name'),
+    #     APIField('website'),
+    #     APIField('image')
+    # ]
     # SEARCH FIELDS
     search_fields = [
         index.SearchField('first_name'),
