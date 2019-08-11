@@ -8,6 +8,7 @@ from django.db import models
 from django.shortcuts import render
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.core.models import Page, Orderable
+from wagtail.api import APIField
 from wagtail.admin.edit_handlers import (
     FieldPanel, PageChooserPanel, StreamFieldPanel, InlinePanel, MultiFieldPanel
 )
@@ -40,6 +41,12 @@ class HomePageCarousel(Orderable):
         ), max_length=20, null=True, blank=True
     )
 
+    api_fields = [
+        APIField('title'),
+        APIField('subtitle'),
+        APIField('text_orient'),
+        APIField('carousel_image')
+    ]
     panels = [
         FieldPanel('title'),
         FieldPanel('subtitle'),
@@ -60,7 +67,7 @@ class HomePage(RoutablePageMixin, Page):
     """
     template = 'home/home_page.html'
     max_count = 1  # Restrict instances of this page to a single instance.
-
+    # FIELDS
     banner_title = models.CharField(max_length=100, blank=False, null=True)
     banner_subtitle = RichTextField(features=['bold', 'italic'])
     banner_image = models.ForeignKey(
@@ -88,6 +95,16 @@ class HomePage(RoutablePageMixin, Page):
         ("cta", blocks.CTABlock()),
     ], null=True, blank=True)
 
+    # SPECIFY FIELDS RETURNED BY API
+    api_fields = [
+        APIField('banner_title'),
+        APIField('banner_subtitle'),
+        APIField('banner_image'),
+        APIField('banner_cta'),
+        APIField('content'),
+        APIField('carousel_images')
+    ]
+    # ADMIN INTERFACE CONFIGURATION
     content_panels = Page.content_panels + [
         MultiFieldPanel([
             FieldPanel('banner_title'),
@@ -104,8 +121,8 @@ class HomePage(RoutablePageMixin, Page):
     ]
 
     class Meta:
-        verbose_name = "Hello World"
-        verbose_name_plural = "Hello Worlds"
+        verbose_name = "Home Page"
+        verbose_name_plural = "Home Pages"
 
     @route(r'^subscribe/$')
     def subscribe_page(self, request, *args, **kwargs):

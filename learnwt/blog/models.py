@@ -18,11 +18,13 @@ from django.core.paginator import (
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 
 from wagtail.core.models import Page, Orderable
+from wagtail.search import index
 from wagtail.core.fields import StreamField, RichTextField
 from wagtail.admin.edit_handlers import (
     FieldPanel, StreamFieldPanel, RichTextFieldPanel, MultiFieldPanel,
     InlinePanel
 )
+from wagtail.api import APIField
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.images.edit_handlers import ImageChooserPanel
@@ -43,11 +45,22 @@ class BlogAuthorsOrderable(Orderable):
         'blog.BlogAuthor',
         on_delete=models.CASCADE,
     )
-
+    api_fields = [
+        APIField('author'),
+        APIField('author_name'),
+        APIField('author_website')
+    ]
     panels = [
         SnippetChooserPanel('author')
     ]
+    # EXPOSING DJANGO MODEL FORMS TO API
+    @property
+    def author_name(self):
+        return self.author.name()
 
+    @property
+    def author_website(self):
+        return self.author.website
 
 @register_snippet
 class BlogAuthor(models.Model):
@@ -55,6 +68,7 @@ class BlogAuthor(models.Model):
     # Snippets are a great way to store and make use of reusable data.
     # This includes things like categories, menus, etc.
     # Here we use it to associate blogs with authors.
+    # FIELDS
     first_name = models.CharField(
         max_length=100, null=True, blank=False,
         help_text="Author's first name"
@@ -77,7 +91,20 @@ class BlogAuthor(models.Model):
             'l f': f'{self.last_name}, {self.first_name}'
         }
         return names.get(name_format)
-
+    # API FIELDS
+    api_fields = [
+        APIField('first_name'),
+        APIField('last_name'),
+        APIField('website'),
+        APIField('image')
+    ]
+    # SEARCH FIELDS
+    search_fields = [
+        index.SearchField('first_name'),
+        index.SearchField('last_name'),
+        index.SearchField('website')
+    ]
+    # ADMIN INTERFACE CONFIGURATION
     panels = [
         MultiFieldPanel([
             FieldPanel('first_name'),
@@ -87,7 +114,6 @@ class BlogAuthor(models.Model):
         MultiFieldPanel([
             FieldPanel('website')
         ], heading="Links")
-
     ]
 
     def __str__(self):
@@ -101,13 +127,23 @@ class BlogAuthor(models.Model):
 @register_snippet
 class BlogCategory(models.Model):
     """Define categories for our blog posts."""
-
+    # FIELDS
     name = models.CharField(max_length=100, unique=True, null=False, blank=False)
     slug = models.SlugField(
         verbose_name="slug", allow_unicode=True, max_length=100,
         default=""
     )
-
+    # API FIELDS
+    api_fields = [
+        APIField('name'),
+        APIField('slug')
+    ]
+    # SEARCH FIELDS
+    search_fields = [
+        index.SearchField('name'),
+        index.SearchField('slug')
+    ]
+    # ADMIN INTERFACE CONFIGURATION
     panels = [
         FieldPanel('name'),
     ]
@@ -157,6 +193,9 @@ class BlogListingPage(RoutablePageMixin, Page):
         context['categories'] = BlogCategory.objects.all()
         return context
 
+    api_fields = [
+        APIField('custom_title'),
+    ]
     content_panels = Page.content_panels + [
         FieldPanel('custom_title'),
     ]
@@ -164,6 +203,9 @@ class BlogListingPage(RoutablePageMixin, Page):
     class Meta:
         verbose_name = "Blog Listing"
         verbose_name_plural = "Blog Listings"
+
+
+
 
     @route(r'^latest/$')
     def latest_blog_posts(self, request, *args, **kwargs):
@@ -213,6 +255,14 @@ class BlogDetailPage(Page):
         ("cta", blocks.CTABlock()),
     ], null=True, blank=True)
 
+    search_fields = Page.search_fields + [
+        index.SearchField('custom_title'),
+        index.SearchField('blog_summary'),
+        index.SearchField('blog_image'),
+        index.SearchField('content'),
+        index.SearchField('blog_authors'),
+        index.SearchField('categories')
+    ]
     content_panels = Page.content_panels + [
         FieldPanel('custom_title'),
         RichTextFieldPanel('blog_summary'),
@@ -225,6 +275,15 @@ class BlogDetailPage(Page):
         MultiFieldPanel([
             FieldPanel('categories', widget=forms.CheckboxSelectMultiple)
         ], heading='Categories')
+    ]
+    # FIELDS RETURNED BY API
+    api_fields = [
+        APIField('custom_title'),
+        APIField('blog_summary'),
+        APIField('blog_image'),
+        APIField('content'),
+        APIField('blog_authors'),
+        APIField('categories')
     ]
 
     class Meta:
